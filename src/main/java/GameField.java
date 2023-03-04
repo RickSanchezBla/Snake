@@ -7,28 +7,28 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class GameField extends JPanel implements ActionListener {
-    private final int SIZE = 320;
-    //320*320/16
-    private final int DOT_SIZE = 16;
-    private final int ALL_DOTS = 400;
+    private final int SIZE = 320;                   //Кол-во заданных точек
+    private final int DOT_SIZE = 16;                // Размер одной нашей точки
+    private final int ALL_DOTS = 400;               // Максимальное кол-во точек
 
     private Image dot;
     private Image apple;
 
     private int[] x = new int[ALL_DOTS];
     private int[] y = new int[ALL_DOTS];
-    private int appleX;
-    private int appleY;
 
-    private int dots;
-    private Timer timer;
+    private int appleX;                             // Координаты яблока
+    private int appleY;                             // Координаты яблока
+
+    private int dots;                               // Кол-во звеньев нашей змеи
+    private Timer timer;                            // fps
 
     private boolean left = false;
     private boolean right = true;
     private boolean up = false;
     private boolean down = false;
 
-    private boolean inGame = true;
+    private boolean inGame = true;                  // Выход из программы
 
     public void loadImage(){
         ImageIcon iia = new ImageIcon("apple.png");
@@ -37,13 +37,13 @@ public class GameField extends JPanel implements ActionListener {
         dot = iid.getImage();
     }
 
-    public  void  createApple(){
-        Random random = new Random();
+    public  void  createApple(){                    //Метод диапозона генерации координат "яблока"
+        Random random = new Random();               //Сделайте так, чтобы метод create apple был ориентирован на появление сразу 3 яблок. ДЗ
         appleX = random.nextInt(20)*DOT_SIZE;
         appleY = random.nextInt(20)*DOT_SIZE;
     }
 
-    public void initGame(){
+    public void initGame(){                         //Метод для начального расположения и движения змейки + ее увеличение при съедании яблока
         dots = 3;
         for (int i= 0; i<dots; i++){
             y[i] = 48;
@@ -53,7 +53,8 @@ public class GameField extends JPanel implements ActionListener {
         timer.start();
         createApple();
     }
-    public void checkApple(){
+
+    public void checkApple(){                       //Перепишите метод check apple так, чтобы он был рассчитан на 3 яблока, которые появляются одновременно. ДЗ
         if (x[0] == appleX && y[0] == appleY){
             dots++;
             createApple();
@@ -63,9 +64,9 @@ public class GameField extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
         if (inGame){
-            g.drawImage(apple, appleX, appleY, this);
+            g.drawImage(apple, appleX, appleY,this);
             for (int i = 0; i < dots; i++) {
-                g.drawImage(dot, x[i], y[i], this);
+                g.drawImage(dot, x[i], y[i],this);
             }
         }
         else {
@@ -74,20 +75,32 @@ public class GameField extends JPanel implements ActionListener {
             g.drawString(str,SIZE/6, SIZE/2);
         }
     }
+
     public void checkCollision(){
         for (int i = dots; i >0; i--) {
             if (x[0] == x[i] && y[0] == y[i]){
                 inGame = false;
-            }
-        }
-        if (x[0]>SIZE)
+            }                                       //Сделайте так, чтобы при попадании в верхнюю или нижнюю грань, змейка умирала. ДЗ
+        }                                           //Сделайте так, чтобы в методе checkCollision змейка при столкновении с верхней границей появлялась в нижней и наоборот. ДЗ
+        if (x[0]>SIZE)                          //transparent walls
             x[0] = 0;
         if (x[0]<0)
             x[0] = SIZE;
-        if (y[0]> SIZE)
-            inGame = false;
+
+//        if (x[0]> SIZE)                       //solid walls
+//            inGame = false;
+//        if (x[0]<0)
+//            inGame = false;
+
+        if (y[0]> SIZE)                         //transparent walls
+            y[0] = 0;
         if (y[0]<0)
-            inGame = false;
+            y[0] = SIZE;
+
+//        if (y[0]> SIZE)                       //solid walls
+//            inGame = false;
+//        if (y[0]<0)
+//            inGame = false;
     }
     @Override
     public void actionPerformed(ActionEvent a){
@@ -98,6 +111,7 @@ public class GameField extends JPanel implements ActionListener {
         }
         repaint();
     }
+
     public GameField(){
         setBackground(Color.BLACK);
         loadImage();
@@ -105,6 +119,7 @@ public class GameField extends JPanel implements ActionListener {
         addKeyListener(new FiledKeyListener());
         setFocusable(true);
     }
+
     public void move(){
         for (int i = dots; i > 0; i--) {
             x[i] = x[i-1];
@@ -119,6 +134,7 @@ public class GameField extends JPanel implements ActionListener {
         if (down)
             y[0] += DOT_SIZE;
     }
+
     class FiledKeyListener extends KeyAdapter{
         @Override
         public void keyPressed(KeyEvent k){

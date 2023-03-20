@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class GameField extends JPanel implements ActionListener {
-    private final int SIZE = 320;                   //Кол-во заданных точек
+    private final int SIZE = 320;                   // Кол-во заданных точек
     private final int DOT_SIZE = 16;                // Размер одной нашей точки
     private final int ALL_DOTS = 400;               // Максимальное кол-во точек
 
@@ -17,18 +17,22 @@ public class GameField extends JPanel implements ActionListener {
     private int[] x = new int[ALL_DOTS];
     private int[] y = new int[ALL_DOTS];
 
-    private int appleX;                             // Координаты яблока
-    private int appleY;                             // Координаты яблока
+    private int  appleX;                             // Координаты яблока
+    private int  appleY;                             // Координаты яблока
+    private int  appleX2;                            // Координаты яблока
+    private int  appleY2;                            // Координаты яблока
+    private int  appleX3;                            // Координаты яблока
+    private int  appleY3;                            // Координаты яблока
 
-    private int dots;                               // Кол-во звеньев нашей змеи
-    private Timer timer;                            // fps
+    private int dots;                                // Кол-во звеньев нашей змеи
+    private Timer timer;                             // fps
 
     private boolean left = false;
     private boolean right = true;
     private boolean up = false;
     private boolean down = false;
 
-    private boolean inGame = true;                  // Выход из программы
+    private boolean inGame = true;                   // Выход из программы
 
     public void loadImage(){
         ImageIcon iia = new ImageIcon("apple.png");
@@ -37,13 +41,25 @@ public class GameField extends JPanel implements ActionListener {
         dot = iid.getImage();
     }
 
-    public  void  createApple(){                    //Метод диапозона генерации координат "яблока"
+    public  void  createApple() {                        //Метод диапозона генерации координат "яблока"
         Random random = new Random();               //Сделайте так, чтобы метод create apple был ориентирован на появление сразу 3 яблок. ДЗ
-        appleX = random.nextInt(20)*DOT_SIZE;
-        appleY = random.nextInt(20)*DOT_SIZE;
+        appleX = random.nextInt(20) * DOT_SIZE;
+        appleY = random.nextInt(20) * DOT_SIZE;
+    }
+    public  void  createApple2() {
+        Random random2 = new Random();
+        appleX2 = random2.nextInt(20) * DOT_SIZE;
+        appleY2 = random2.nextInt(20) * DOT_SIZE;
+        }
+    public  void  createApple3(){
+        Random random3 = new Random();
+        appleX3 = random3.nextInt(20) * DOT_SIZE;
+        appleY3 = random3.nextInt(20) * DOT_SIZE;
     }
 
-    public void initGame(){                         //Метод для начального расположения и движения змейки + ее увеличение при съедании яблока
+
+
+    public void initGame(){                             //Метод для начального расположения и движения змейки + ее увеличение при съедании яблока
         dots = 3;
         for (int i= 0; i<dots; i++){
             y[i] = 48;
@@ -52,19 +68,38 @@ public class GameField extends JPanel implements ActionListener {
         timer = new Timer(150, this);
         timer.start();
         createApple();
+        createApple2();
+        createApple3();
     }
 
-    public void checkApple(){                       //Перепишите метод check apple так, чтобы он был рассчитан на 3 яблока, которые появляются одновременно. ДЗ
-        if (x[0] == appleX && y[0] == appleY){
+    public void checkApple(){                           //Перепишите метод check apple так, чтобы он был рассчитан на 3 яблока, которые появляются одновременно. ДЗ
+        if (x[0] == appleX && y[0] == appleY) {
             dots++;
             createApple();
         }
+        if (x[0] == appleX2 && y[0] == appleY2) {
+            dots++;
+            createApple2();
+            }
+        if (x[0] == appleX3 && y[0] == appleY3){
+            dots++;
+            createApple3();
+        }
     }
+
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
         if (inGame){
             g.drawImage(apple, appleX, appleY,this);
+            for (int i = 0; i < dots; i++) {
+                g.drawImage(dot, x[i], y[i],this);
+            }
+            g.drawImage(apple, appleX2, appleY2,this);
+            for (int i = 0; i < dots; i++) {
+                g.drawImage(dot, x[i], y[i],this);
+            }
+            g.drawImage(apple, appleX3, appleY3,this);
             for (int i = 0; i < dots; i++) {
                 g.drawImage(dot, x[i], y[i],this);
             }
